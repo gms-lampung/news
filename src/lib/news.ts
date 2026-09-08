@@ -26,7 +26,7 @@ function parseRss(xml: string): NewsItem[] {
   while ((m = re.exec(xml)) !== null) {
     const block = m[1];
     const get = (tag: string) => {
-      const r = new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`);
+      const r = new RegExp(`<${tag}>([\\s\\S]*?)<\/${tag}>`);
       const x = block.match(r);
       return x ? x[1] : '';
     };
@@ -65,10 +65,73 @@ export async function getLatestNews(): Promise<NewsItem[]> {
       if (!seen.has(key)) seen.set(key, it);
     }
   }
-  return [...seen.values()].sort(
-    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-  );
+  return [...seen.values()]
+    .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+    .slice(0, 50);
 }
+
+export type BMKGData = {
+  status: string;
+  level: number;
+  radius: string;
+  detail: string;
+};
+
+// Fetch latest @infobmkg post via Google Search RSS — auto-revalidates every 30 min
+// Filter: focus on Anak Krakatau eruption relevant to Lampung; ignore the rest.
+export async function getBMKGNotice(): Promise<string> {
+  try {
+    const FEEDS = [
+      'https://news.google.com/rss/search?q=site:x.com+infobmkg+anak+krakatau+lampung+when:1d&hl=id&gl=ID&ceid=ID:id',
+      'https://news.google.com/rss/search?q=site:x.com+infobmkg+erupsi+lampung+when:1d&hl=id&gl=ID&ceid=ID:id',
+      'https://news.google.com/rss/search?q=infobmkg+anak+krakatau+erupsi+lampung+when:1d&hl=id&gl=ID&ceid=ID:id',
+    ];
+    const KEYWORDS = ['anak krakatau', 'krakatau', 'erupsi', 'lampung', 'sunda', 'vulkanik', 'abu vulkanik', 'sigi', 'sigmet'];
+
+    const lists = await Promise.all(FEEDS.map(async url => {
+      try {
+        const res = await fetch(url, {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          next: { revalidate: 1800 },
+        });
+        if (!res.ok) return [];
+        const xml = await res.text();
+        return parseRss(xml);
+      } catch {
+        return [];
+      }
+    }));
+
+    // Dedup by link; pick the newest item that mentions Anak Krakatau + Lampung
+    const seen = new Map<string, NewsItem>();
+    for (const list of lists) {
+      for (const it of list) {
+        const key = it.link.replace(/article\/[^/]+/, 'article/key');
+        if (!seen.has(key)) seen.set(key, it);
+      }
+    }
+    const items = [...seen.values()]
+      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+
+    // Find the first item that has BOTH Krakatau AND Lampung context
+    for (const it of items) {
+      const haystack = `${it.title} ${it.description}`.toLowerCase();
+      const hasKrakatau = /krakatau/i.test(haystack);
+      const hasLampung = /(lampung|sunda)/i.test(haystack);
+      const hasOther = new RegExp(KEYWORDS.join('|'), 'i').test(haystack);
+      if (hasKrakatau && hasLampung) {
+        return `${it.description} (${formatJakarta(it.pubDate)})`;
+      }
+      if (hasKrakatau && hasOther) {
+        return `${it.description} (${formatJakarta(it.pubDate)})`;
+      }
+    }
+    return '';
+  } catch {
+    return '';
+  }
+}
+
 
 export function formatJakarta(iso: string): string {
   const d = new Date(iso);

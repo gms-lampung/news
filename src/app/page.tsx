@@ -1,58 +1,99 @@
-import { getLatestNews, formatJakarta } from '@/lib/news';
+import { getLatestNews, formatJakarta, getBMKGNotice } from '@/lib/news';
 
 export const revalidate = 1800; // 30 min
 
 export default async function NewsPage() {
   const items = await getLatestNews();
+  const bmkgNotice = await getBMKGNotice();
   const generatedAt = formatJakarta(new Date().toISOString());
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 font-sans">
-      <header className="mb-6 border-b border-gray-200 pb-4">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Berita Erupsi Bandar Lampung
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Update otomatis tiap 30 menit · Dimuat ulang: {generatedAt}
-        </p>
-        <p className="mt-2 text-xs text-gray-400">
-          Status Gunung Anak Krakatau: <span className="font-semibold text-red-600">SIAGA (Level III)</span> · Radius bahaya 3 km dari kawah
-        </p>
-      </header>
+    <>
+      {/* Navbar */}
+      <nav className="gms-gradient" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0.75rem 1.25rem', color:'#fff', boxShadow:'0 2px 10px rgba(0,43,130,0.15)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
+          <h1 className="m-0 text-[1.1rem] font-extrabold tracking-wide">50 Berita Terkini</h1>
+        </div>
+      </nav>
 
-      {items.length === 0 ? (
-        <p className="text-gray-500">Tidak ada berita terbaru</p>
-      ) : (
-        <ol className="space-y-5">
-          {items.map((it, i) => (
-            <li key={it.link} className="rounded-lg border border-gray-200 p-4 hover:bg-gray-50">
-              <div className="mb-1 flex items-center gap-2 text-xs text-gray-500">
-                <span className="rounded bg-red-50 px-2 py-0.5 font-mono text-red-700">
-                  #{items.length - i}
-                </span>
-                <time dateTime={it.pubDate}>{formatJakarta(it.pubDate)}</time>
-                <span>·</span>
-                <span className="font-medium">{it.source}</span>
+      <div className="mx-auto w-full max-w-[960px] px-3">
+        {/* Judul Section + Indikator */}
+        <div className="section-title-wrap pt-4 pb-3">
+          <h2 className="page-title">
+            <i className="fa-solid fa-volcano section-icon"></i> Erupsi Gunung Anak Krakatau (Lampung)
+          </h2>
+          <div className="blue-indicator"></div>
+          <p style={{ marginTop:'0.25rem', fontSize:'0.75rem', color:'var(--text-sub)' }}>
+            Update otomatis tiap 30 menit · Dimuat ulang {generatedAt}
+          </p>
+        </div>
+
+        {/* Status Card */}
+        <div className="card-gms">
+          <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', gap:'1rem' }}>
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', width:'3rem', height:'3rem', borderRadius:'50%', backgroundColor:'#fef2f2', color:'#dc2626', fontSize:'1.25rem' }}>
+              <i className="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div style={{ flex: '1', minWidth: '200px' }}>
+              <p style={{ fontSize: '0.875rem', fontWeight: 600 }}>Gunung Anak Krakatau</p>
+              <p style={{ fontSize: '0.75rem', color: '#5e6d82' }}>
+                Status: <span className="siaga">SIAGA (Level III)</span> &middot; Radius bahaya 3 km
+              </p>
+            </div>
+            <a href="https://magma.esdm.go.id" target="_blank" rel="noopener noreferrer" className="btn-gms-pill">
+              <i className="fa-solid fa-satellite-dish" style={{ fontSize: '0.75rem' }}></i>
+              PVMBG/MAGMA
+            </a>
+          </div>
+
+          {/* Dynamic BMKG info */}
+          <div className="card-gms mt-2" style={{ backgroundColor: '#f8fafc', borderLeft: '4px solid #0284c7' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
+              <div style={{ color: '#0284c7', fontSize: '1.25rem', marginTop: '0.1rem' }}>
+                <i className="fa-solid fa-circle-info"></i>
               </div>
-              <a
-                href={it.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block text-lg font-semibold text-gray-900 hover:text-blue-700"
-              >
-                {it.title}
-              </a>
-              {it.description && (
-                <p className="mt-2 text-sm text-gray-600 line-clamp-3">{it.description}</p>
-              )}
-            </li>
-          ))}
-        </ol>
-      )}
+              <div style={{ fontSize: '0.85rem', lineHeight: '1.5', color: '#334155' }}>
+                <strong style={{ color: '#0f172a' }}>Pemberitahuan PVMBG/BMKG:</strong>
+                <p style={{ margin: '0.25rem 0', fontSize: '0.85rem' }}>
+                  {bmkgNotice || 'Gagal memuat info terbaru. Tetap waspada dan ikuti arahan petugas.'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <footer className="mt-10 border-t border-gray-200 pt-4 text-xs text-gray-400">
-        Sumber: Google News · PVMBG / MAGMA Indonesia · Refetch 30 menit
-      </footer>
-    </main>
+        {/* Daftar Berita */}
+        {items.length === 0 ? (
+          <div className="card-gms" style={{ textAlign: 'center', color: 'var(--text-sub)', fontSize: '0.875rem' }}>
+            <i className="fa-solid fa-circle-info" style={{ marginRight: '0.5rem' }}></i>
+            Tidak ada berita terbaru
+          </div>
+        ) : (
+          <ol className="space-y-4 mt-6">
+            {items.map((it, i) => (
+              <li key={it.link} className="card-gms">
+                <div style={{ marginBottom: '0.5rem', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem', fontSize: '11px', color: '#5e6d82' }}>
+                  <span className="badge-ibadah">#{items.length - i}</span>
+                  <time dateTime={it.pubDate} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <i className="fa-regular fa-clock"></i> {formatJakarta(it.pubDate)}
+                  </time>
+                  <span>·</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 500 }}>
+                    <i className="fa-solid fa-newspaper"></i> {it.source}
+                  </span>
+                </div>
+                <a href={it.link} target="_blank" rel="noopener noreferrer" style={{ display: 'block', fontSize: '15px', fontWeight: 600, color: '#18233b', textDecoration: 'none', lineHeight: '1.4' }}>
+                  {it.title}
+                </a>
+              </li>
+            ))}
+          </ol>
+        )}
+
+        <footer className="footer" style={{ marginTop: '2rem', borderTop: '1px solid #d0d7de', paddingTop: '1rem', fontSize: '11px', color: '#5e6d82', textAlign: 'center' }}>
+          Sumber: Google News · BMKG · PVMBG / MAGMA Indonesia · Auto-refresh 30 menit
+        </footer>
+      </div>
+    </>
   );
 }
