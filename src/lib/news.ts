@@ -16,7 +16,16 @@ const FEEDS = [
 ];
 
 function stripHtml(s: string): string {
-  return s.replace(/<[^>]+>/g, '').replace(/&[a-z]+;/gi, ' ').trim();
+  return s
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&[a-z]+;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function parseRss(xml: string): NewsItem[] {
