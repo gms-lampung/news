@@ -55,7 +55,10 @@ export default async function NewsPage() {
               <div style={{ fontSize: '0.85rem', lineHeight: '1.5', color: '#334155' }}>
                 <strong style={{ color: '#0f172a' }}>Pemberitahuan PVMBG/BMKG:</strong>
                 <p style={{ margin: '0.25rem 0', fontSize: '0.85rem' }}>
-                  {bmkgNotice || 'Gagal memuat info terbaru. Tetap waspada dan ikuti arahan petugas.'}
+                  {bmkgNotice.text
+                    ? <><span>{bmkgNotice.text}</span> {' '}<a href={bmkgNotice.link} target="_blank" rel="noopener noreferrer" style={{ color: '#0284c7', textDecoration: 'underline', fontWeight: 500 }}>Lihat selengkapnya →</a></>
+                    : 'Gagal memuat info terbaru. Tetap waspada dan ikuti arahan petugas.'
+                  }
                 </p>
               </div>
             </div>

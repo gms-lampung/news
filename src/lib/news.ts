@@ -86,9 +86,14 @@ export type BMKGData = {
   detail: string;
 };
 
+export type BMKGNotice = {
+  text: string;
+  link: string;
+};
+
 // Fetch latest @infobmkg post via Google Search RSS — auto-revalidates every 30 min
 // Filter: focus on Anak Krakatau eruption relevant to Lampung; ignore the rest.
-export async function getBMKGNotice(): Promise<string> {
+export async function getBMKGNotice(): Promise<BMKGNotice> {
   try {
     const FEEDS = [
       'https://news.google.com/rss/search?q=site:x.com+infobmkg+anak+krakatau+lampung+when:1d&hl=id&gl=ID&ceid=ID:id',
@@ -128,16 +133,16 @@ export async function getBMKGNotice(): Promise<string> {
       const hasKrakatau = /krakatau/i.test(haystack);
       const hasLampung = /(lampung|sunda)/i.test(haystack);
       const hasOther = new RegExp(KEYWORDS.join('|'), 'i').test(haystack);
-      if (hasKrakatau && hasLampung) {
-        return `${it.description} (${formatJakarta(it.pubDate)})`;
-      }
-      if (hasKrakatau && hasOther) {
-        return `${it.description} (${formatJakarta(it.pubDate)})`;
+      if (hasKrakatau && hasLampung || hasKrakatau && hasOther) {
+        return {
+          text: `${it.description} (${formatJakarta(it.pubDate)})`,
+          link: it.link,
+        };
       }
     }
-    return '';
+    return { text: '', link: '' };
   } catch {
-    return '';
+    return { text: '', link: '' };
   }
 }
 
