@@ -12,7 +12,7 @@ export default async function NewsPage() {
       {/* Navbar */}
             <nav className="gms-gradient" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0.5rem 1rem', color:'#fff', boxShadow:'0 2px 10px rgba(0,43,130,0.15)' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', margin:'0 0.5rem' }}>
-                <h1 className="m-0 text-[0.625rem] font-semibold tracking-wide">50 Berita Terkini</h1>
+                <h1 className="m-0 text-[0.375rem] font-semibold tracking-wide">50 Berita Terkini</h1>
               </div>
             </nav>
 
