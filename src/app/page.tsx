@@ -10,9 +10,9 @@ export default async function NewsPage() {
   return (
     <>
       {/* Navbar */}
-      <nav className="gms-gradient" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0.75rem 1.25rem', color:'#fff', boxShadow:'0 2px 10px rgba(0,43,130,0.15)' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:'0.5rem' }}>
-          <h1 className="m-0 text-[1.1rem] font-extrabold tracking-wide">50 Berita Terkini</h1>
+      <nav className="gms-gradient" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0.6rem 1rem', color:'#fff', boxShadow:'0 2px 10px rgba(0,43,130,0.15)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', margin:'0 0.5rem' }}>
+          <h1 className="m-0 text-[1rem] font-bold tracking-wide">50 Berita Terkini</h1>
         </div>
       </nav>
 
