@@ -12,14 +12,14 @@ export default async function NewsPage() {
       {/* Navbar */}
             <nav className="gms-gradient" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0.5rem 1rem', color:'#fff', boxShadow:'0 2px 10px rgba(0,43,130,0.15)' }}>
               <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', margin:'0 0.5rem' }}>
-                <h1 className="m-0 text-[0.375rem] font-semibold tracking-wide">50 Berita Terkini</h1>
+                <h1 className="m-0 text-[0.3125rem] font-semibold tracking-wide">50 Berita Terkini</h1>
               </div>
             </nav>
 
       <div className="mx-auto w-full max-w-[960px] px-3">
         {/* Judul Section + Indikator */}
         <div className="section-title-wrap pt-4 pb-3">
-          <h2 className="page-title">
+          <h2 className="page-title" style={{ fontSize: '0.875rem' }}>
             <i className="fa-solid fa-volcano section-icon"></i> Erupsi Gunung Anak Krakatau (Lampung)
           </h2>
           <div className="blue-indicator"></div>
