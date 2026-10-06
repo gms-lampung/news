@@ -147,6 +147,52 @@ export async function getBMKGNotice(): Promise<BMKGNotice> {
 }
 
 
+export type PVMBGStatus = {
+  level: number;
+  label: string;
+  statusText: string;
+  radiusKm: string | null;
+  sourceUrl: string;
+};
+
+const MAGMA_VOLCANO_URL = 'https://magma.esdm.go.id/v1/gunung-api/anak-krakatau';
+
+const LEVEL_RADIUS_KM: Record<number, string | null> = {
+  1: null,
+  2: '2',
+  3: '3',
+  4: '5',
+};
+
+const ROMAN_TO_LEVEL: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4 };
+
+export async function getPVMBGStatus(): Promise<PVMBGStatus | null> {
+  try {
+    const res = await fetch(MAGMA_VOLCANO_URL, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      next: { revalidate: 1800 },
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const idx = html.indexOf('Tingkat Aktivitas Saat Ini');
+    if (idx < 0) return null;
+    const m = html.slice(idx, idx + 600).match(/Level\s+([IVX]+)\s*\(([^)]+)\)/i);
+    if (!m) return null;
+    const level = ROMAN_TO_LEVEL[m[1].toUpperCase()];
+    if (!level) return null;
+    const label = m[2].trim().toUpperCase();
+    return {
+      level,
+      label,
+      statusText: `Level ${m[1].toUpperCase()} (${label})`,
+      radiusKm: LEVEL_RADIUS_KM[level],
+      sourceUrl: MAGMA_VOLCANO_URL,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function formatJakarta(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleString('id-ID', {

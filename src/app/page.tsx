@@ -1,10 +1,18 @@
-import { getLatestNews, formatJakarta, getBMKGNotice } from '@/lib/news';
+import { getLatestNews, formatJakarta, getBMKGNotice, getPVMBGStatus } from '@/lib/news';
 
 export const revalidate = 1800; // 30 min
+
+const LEVEL_META: Record<number, { color: string; bg: string }> = {
+  1: { color: '#15803d', bg: '#f0fdf4' },
+  2: { color: '#b45309', bg: '#fffbeb' },
+  3: { color: '#c2410c', bg: '#fff7ed' },
+  4: { color: '#dc2626', bg: '#fef2f2' },
+};
 
 export default async function NewsPage() {
   const items = await getLatestNews();
   const bmkgNotice = await getBMKGNotice();
+  const status = await getPVMBGStatus();
   const generatedAt = formatJakarta(new Date().toISOString());
 
   return (
@@ -37,7 +45,33 @@ export default async function NewsPage() {
             <div style={{ flex: '1', minWidth: '200px' }}>
               <p style={{ fontSize: '0.875rem', fontWeight: 600 }}>Gunung Anak Krakatau</p>
               <p style={{ fontSize: '0.75rem', color: '#5e6d82' }}>
-                Status: <span className="siaga">SIAGA (Level III)</span> &middot; Radius bahaya 3 km
+                Status:{' '}
+                {status ? (
+                  <>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        padding: '0.05rem 0.5rem',
+                        borderRadius: '999px',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        color: LEVEL_META[status.level].color,
+                        backgroundColor: LEVEL_META[status.level].bg,
+                      }}
+                    >
+                      {status.statusText}
+                    </span>{' '}
+                    {status.radiusKm ? (
+                      <>&middot; Radius bahaya {status.radiusKm} km</>
+                    ) : (
+                      <>&middot; Radius larangan: sesuai rekomendasi PVMBG</>
+                    )}
+                  </>
+                ) : (
+                  <span style={{ color: '#b45309' }}>
+                    Tidak dapat dimuat. Cek <a href="https://magma.esdm.go.id" target="_blank" rel="noopener noreferrer" style={{ color: '#0284c7', textDecoration: 'underline' }}>MAGMA/PVMBG</a>
+                  </span>
+                )}
               </p>
             </div>
             <a href="https://magma.esdm.go.id" target="_blank" rel="noopener noreferrer" className="btn-gms-pill">
