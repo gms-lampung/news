@@ -27,12 +27,12 @@ export default async function NewsPage() {
 
       <div className="mx-auto w-full max-w-[960px] px-6">
         {/* Judul Section + Indikator */}
-        <div className="section-title-wrap pt-4 pb-3">
-          <h2 className="page-title flex items-center gap-2">
+        <div className="section-title-wrap pt-6 pb-4">
+          <h2 className="page-title flex items-center gap-2 text-[#18233b]">
             <i className="fa-solid fa-volcano text-[#0052cc]"></i> Erupsi Gunung Anak Krakatau (Lampung)
           </h2>
-          <div className="blue-indicator"></div>
-          <p className="mt-1 text-xs" style={{ color: 'var(--text-sub)' }}>
+          <div className="blue-indicator mt-2"></div>
+          <p className="mt-2 text-xs" style={{ color: 'var(--text-sub)' }}>
             Update otomatis tiap 30 menit · Dimuat ulang {generatedAt}
           </p>
         </div>
