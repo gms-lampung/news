@@ -25,7 +25,7 @@ export default async function NewsPage() {
         </div>
       </nav>
 
-      <div className="mx-auto w-full max-w-[960px] px-6">
+      <div className="mx-auto w-full max-w-[960px] px-8">
         {/* Judul Section + Indikator */}
         <div className="section-title-wrap pt-6 pb-4">
           <h2 className="page-title flex items-center gap-2 text-[#18233b]">
