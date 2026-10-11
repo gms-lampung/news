@@ -28,7 +28,7 @@ export default async function NewsPage() {
       <div className="mx-auto w-full max-w-[960px] px-8">
         {/* Judul Section + Indikator */}
         <div className="section-title-wrap pt-6 pb-4">
-          <h2 className="page-title flex items-center gap-2 text-[#18233b]">
+          <h2 className="page-title flex items-center gap-2 text-[#18233b] pl-5">
             <i className="fa-solid fa-volcano text-[#0052cc]"></i> Erupsi Gunung Anak Krakatau (Lampung)
           </h2>
           <div className="blue-indicator mt-2"></div>
