@@ -18,14 +18,14 @@ export default async function NewsPage() {
   return (
     <>
       {/* Navbar */}
-      <nav className="gms-gradient flex items-center justify-between px-5 py-3 text-white shadow-[0_2px_10px_rgba(0,43,130,0.15)]">
+      <nav className="gms-gradient flex items-center justify-between px-8 py-3 text-white shadow-[0_2px_10px_rgba(0,43,130,0.15)]">
         <div className="flex items-center gap-2">
           <i className="fa-solid fa-church text-lg"></i>
           <h1 className="m-0 text-lg font-extrabold tracking-wide">50 Berita Terkini</h1>
         </div>
       </nav>
 
-      <div className="mx-auto w-full max-w-[960px] px-3">
+      <div className="mx-auto w-full max-w-[960px] px-4">
         {/* Judul Section + Indikator */}
         <div className="section-title-wrap pt-4 pb-3">
           <h2 className="page-title flex items-center gap-2">
