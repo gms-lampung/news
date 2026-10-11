@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --gms-blue: #0052cc;
   --gms-blue-dark: #003399;
